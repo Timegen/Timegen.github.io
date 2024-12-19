@@ -8,6 +8,8 @@
         body {
             margin: 0;
             font-family: Arial, sans-serif;
+            background: #000;
+            color: #fff;
             overflow: hidden;
         }
 
@@ -22,29 +24,30 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 20px;
             gap: 20px;
         }
 
         .reel {
             width: 100%;
-            height: 500px;
-            background: #000;
-            border-radius: 10px;
+            height: 100vh;
+            background: #333;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
             font-size: 24px;
             font-weight: bold;
             color: white;
             position: relative;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
         }
 
-        .reel img {
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: cover;
-            border-radius: 10px;
+        .reel-caption {
+            margin-top: 10px;
+            font-size: 18px;
+            font-style: italic;
+            color: #ddd;
         }
     </style>
 </head>
@@ -58,28 +61,41 @@
     <script>
         const content = document.getElementById('content');
 
-        // Sample data for reels (replace with your own images or videos)
-        const reelData = [
-            'https://via.placeholder.com/1080x1920?text=Reel+1',
-            'https://via.placeholder.com/1080x1920?text=Reel+2',
-            'https://via.placeholder.com/1080x1920?text=Reel+3'
+        const patterns = [
+            "stripes", "dots", "waves", "grid", "diagonal" // Example patterns
         ];
 
-        function createReel(src) {
+        const captions = [
+            "Super Sigma Moves 💎", "Fweah Forever 🖤", "Unstoppable Energy ⚡", "Keep Grinding 🚀", "Hitting Homixide Levels 🦇"
+        ];
+
+        function getRandomPattern() {
+            const pattern = patterns[Math.floor(Math.random() * patterns.length)];
+            return `url('https://via.placeholder.com/1080x1920/${Math.floor(Math.random() * 16777215).toString(16)}/${Math.floor(Math.random() * 16777215).toString(16)}?text=${pattern}')`;
+        }
+
+        function getRandomCaption() {
+            return captions[Math.floor(Math.random() * captions.length)];
+        }
+
+        function createReel() {
             const reel = document.createElement('div');
             reel.className = 'reel';
+            reel.style.backgroundImage = getRandomPattern();
+            reel.style.backgroundSize = 'cover';
+            reel.style.backgroundPosition = 'center';
 
-            const img = document.createElement('img');
-            img.src = src;
+            const caption = document.createElement('div');
+            caption.className = 'reel-caption';
+            caption.textContent = getRandomCaption();
 
-            reel.appendChild(img);
+            reel.appendChild(caption);
             return reel;
         }
 
         function loadReels(count = 10) {
             for (let i = 0; i < count; i++) {
-                const randomReel = reelData[Math.floor(Math.random() * reelData.length)];
-                const reel = createReel(randomReel);
+                const reel = createReel();
                 content.appendChild(reel);
             }
         }
