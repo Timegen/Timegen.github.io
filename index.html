@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Scrolling Game</title>
+    <title>Infinite Scrolling Reels Game</title>
     <style>
         body {
             margin: 0;
@@ -14,7 +14,7 @@
         .scroll-container {
             width: 100%;
             height: 100vh;
-            overflow-y: auto;
+            overflow-y: scroll;
             position: relative;
         }
 
@@ -23,13 +23,13 @@
             flex-direction: column;
             align-items: center;
             padding: 20px;
-            gap: 50px;
+            gap: 20px;
         }
 
-        .item {
-            width: 80%;
-            height: 200px;
-            background: linear-gradient(45deg, #ff9a9e, #fad0c4);
+        .reel {
+            width: 100%;
+            height: 500px;
+            background: #000;
             border-radius: 10px;
             display: flex;
             align-items: center;
@@ -37,56 +37,64 @@
             font-size: 24px;
             font-weight: bold;
             color: white;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            position: relative;
         }
 
-        .score-board {
-            position: fixed;
-            top: 10px;
-            left: 10px;
-            background: #000;
-            color: #fff;
-            padding: 10px 20px;
-            border-radius: 5px;
-            font-size: 18px;
+        .reel img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: cover;
+            border-radius: 10px;
         }
     </style>
 </head>
 <body>
-    <div class="score-board">Score: <span id="score">0</span></div>
     <div class="scroll-container" id="scrollContainer">
         <div class="content" id="content">
-            <!-- Items dynamically added here -->
+            <!-- Reels dynamically added here -->
         </div>
     </div>
 
     <script>
         const content = document.getElementById('content');
-        const scoreBoard = document.getElementById('score');
-        let score = 0;
 
-        // Add items dynamically
-        for (let i = 1; i <= 50; i++) {
-            const item = document.createElement('div');
-            item.className = 'item';
-            item.textContent = `Item ${i}`;
-            content.appendChild(item);
+        // Sample data for reels (replace with your own images or videos)
+        const reelData = [
+            'https://via.placeholder.com/1080x1920?text=Reel+1',
+            'https://via.placeholder.com/1080x1920?text=Reel+2',
+            'https://via.placeholder.com/1080x1920?text=Reel+3'
+        ];
+
+        function createReel(src) {
+            const reel = document.createElement('div');
+            reel.className = 'reel';
+
+            const img = document.createElement('img');
+            img.src = src;
+
+            reel.appendChild(img);
+            return reel;
         }
 
-        const scrollContainer = document.getElementById('scrollContainer');
-        let lastScrollTop = 0;
-
-        // Track scroll direction and update score
-        scrollContainer.addEventListener('scroll', () => {
-            const scrollTop = scrollContainer.scrollTop;
-            if (scrollTop > lastScrollTop) {
-                score++;
-            } else if (scrollTop < lastScrollTop) {
-                score = Math.max(score - 1, 0);
+        function loadReels() {
+            for (let i = 0; i < 10; i++) {
+                const randomReel = reelData[Math.floor(Math.random() * reelData.length)];
+                const reel = createReel(randomReel);
+                content.appendChild(reel);
             }
-            lastScrollTop = scrollTop;
-            scoreBoard.textContent = score;
+        }
+
+        // Infinite scrolling logic
+        const scrollContainer = document.getElementById('scrollContainer');
+
+        scrollContainer.addEventListener('scroll', () => {
+            if (scrollContainer.scrollTop + scrollContainer.clientHeight >= scrollContainer.scrollHeight) {
+                loadReels();
+            }
         });
+
+        // Initial load
+        loadReels();
     </script>
 </body>
 </html>
