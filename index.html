@@ -28,9 +28,8 @@
         }
 
         .reel {
-            width: 100%;
-            height: calc(100vw * 16 / 9); /* Maintain 9:16 aspect ratio */
-            max-height: 100vh;
+            width: calc(100vh * 0.5625); /* Maintain 9:16 aspect ratio */
+            height: 100vh; /* Full screen height */
             background: #444;
             display: flex;
             flex-direction: column;
@@ -77,9 +76,7 @@
         const content = document.getElementById('content');
         const counter = document.getElementById('counter');
 
-        const patterns = [
-            "stripes", "dots", "waves", "grid", "diagonal" // Example patterns
-        ];
+        const patterns = ["stripes", "dots", "waves", "grid", "diagonal"];
 
         const captions = [
             "Born to Lead, Forced to Scroll.",
@@ -96,8 +93,9 @@
         }
 
         function getRandomPattern() {
-            const pattern = patterns[Math.floor(Math.random() * patterns.length)];
-            return `url('https://via.placeholder.com/1080x1920/${Math.floor(Math.random() * 16777215).toString(16)}/${Math.floor(Math.random() * 16777215).toString(16)}?text=${pattern}')`;
+            const randomHue = Math.floor(Math.random() * 360);
+            const randomLightness = Math.floor(Math.random() * 20) + 10; // Low lightness colors
+            return `linear-gradient(hsla(${randomHue}, 70%, ${randomLightness}%, 1), hsla(${randomHue}, 70%, ${randomLightness + 10}%, 1))`;
         }
 
         function getRandomCaption() {
@@ -107,9 +105,7 @@
         function createReel() {
             const reel = document.createElement('div');
             reel.className = 'reel';
-            reel.style.backgroundImage = getRandomPattern();
-            reel.style.backgroundSize = 'cover';
-            reel.style.backgroundPosition = 'center';
+            reel.style.background = getRandomPattern();
 
             const caption = document.createElement('div');
             caption.className = 'reel-caption';
@@ -132,6 +128,16 @@
         const scrollContainer = document.getElementById('scrollContainer');
 
         scrollContainer.addEventListener('scroll', () => {
+            const reels = document.querySelectorAll('.reel');
+            reels.forEach((reel, index) => {
+                const reelRect = reel.getBoundingClientRect();
+                if (reelRect.top < window.innerHeight && reelRect.bottom > 0 && !reel.dataset.seen) {
+                    reel.dataset.seen = true;
+                    reelCount++;
+                    updateCounter();
+                }
+            });
+
             if (scrollContainer.scrollTop + scrollContainer.clientHeight >= scrollContainer.scrollHeight - 100) {
                 loadReels();
             }
