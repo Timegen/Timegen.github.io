@@ -76,8 +76,8 @@
             return reel;
         }
 
-        function loadReels() {
-            for (let i = 0; i < 10; i++) {
+        function loadReels(count = 10) {
+            for (let i = 0; i < count; i++) {
                 const randomReel = reelData[Math.floor(Math.random() * reelData.length)];
                 const reel = createReel(randomReel);
                 content.appendChild(reel);
@@ -88,13 +88,13 @@
         const scrollContainer = document.getElementById('scrollContainer');
 
         scrollContainer.addEventListener('scroll', () => {
-            if (scrollContainer.scrollTop + scrollContainer.clientHeight >= scrollContainer.scrollHeight) {
+            if (scrollContainer.scrollTop + scrollContainer.clientHeight >= scrollContainer.scrollHeight - 100) {
                 loadReels();
             }
         });
 
         // Initial load
-        loadReels();
+        loadReels(20); // Start with more reels to make scrolling smoother initially
     </script>
 </body>
 </html>
