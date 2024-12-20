@@ -134,7 +134,7 @@
             return reel;
         }
 
-        function loadReels(count = 10) {
+        function loadReels(count = 100) {
             for (let i = 0; i < count; i++) {
                 const reel = createReel();
                 content.appendChild(reel);
@@ -146,7 +146,11 @@
 
         scrollContainer.addEventListener('scroll', () => {
             const reels = document.querySelectorAll('.reel');
-            reels.forEach((reel, index) => {
+            const distanceToEnd = scrollContainer.scrollHeight - scrollContainer.scrollTop - scrollContainer.clientHeight;
+            const numberOfReels = reels.length;
+
+            // Track and update visible reels
+            reels.forEach((reel) => {
                 const reelRect = reel.getBoundingClientRect();
                 if (reelRect.top < window.innerHeight && reelRect.bottom > 0 && !reel.dataset.seen) {
                     reel.dataset.seen = true;
@@ -155,13 +159,14 @@
                 }
             });
 
-            if (scrollContainer.scrollTop + scrollContainer.clientHeight >= scrollContainer.scrollHeight - 100) {
-                loadReels();
+            // Load 100 reels when you're within 100 reels of the end
+            if (distanceToEnd < 1000 * 100) { // 100 reels * height of each reel (100vh)
+                loadReels(300); // Load 100 reels at a time
             }
         });
 
         // Initial load
-        loadReels(20); // Start with more reels to make scrolling smoother initially
+        loadReels(100); // Start with 100 reels for a smoother experience initially
     </script>
 </body>
 </html>
