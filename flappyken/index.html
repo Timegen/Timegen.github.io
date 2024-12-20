@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bat Dash 🦇</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: black;
+            overflow: hidden;
+            color: white;
+        }
+
+        canvas {
+            display: block;
+            margin: 0 auto;
+            background: linear-gradient(to bottom, #121212, #1c1c1c);
+            border: 2px solid #444;
+        }
+
+        #score {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: 20px;
+            color: white;
+        }
+
+        #startScreen, #loseScreen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            color: white;
+            z-index: 10;
+        }
+
+        #loseScreen {
+            display: none;
+        }
+
+        img.bat {
+            position: absolute;
+            width: 50px;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+    <div id="startScreen">
+        <h1>Bat Dash 🦇</h1>
+        <p>Tap or press SPACE to fly. Avoid obstacles and collect points!</p>
+        <button onclick="startGame()">Start Game</button>
+    </div>
+    <div id="loseScreen">
+        <h1>Game Over</h1>
+        <p>Your Score: <span id="finalScore">0</span></p>
+        <button onclick="restartGame()">Restart</button>
+    </div>
+    <canvas id="gameCanvas"></canvas>
+    <div id="score">Score: 0</div>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const batImg = new Image();
+        batImg.src = 'https://via.placeholder.com/50x50?text=Bat'; // Replace with actual image URL
+
+        const bat = {
+            x: 100,
+            y: canvas.height / 2,
+            width: 50,
+            height: 50,
+            dy: 0,
+            gravity: 0.4, // Reduced gravity for easier gameplay
+            jump: -8,     // Smaller jump for better control
+        };
+
+        const obstacles = [];
+        const obstacleGap = 400; // Increased gap for easier gameplay
+        let score = 0;
+        let gameOver = false;
+        let gameStarted = false;
+
+        function drawBat() {
+            ctx.drawImage(batImg, bat.x, bat.y, bat.width, bat.height);
+        }
+
+        function handleObstacles() {
+            if (obstacles.length === 0 || obstacles[obstacles.length - 1].x < canvas.width - obstacleGap) {
+                const height = Math.random() * (canvas.height / 2);
+                obstacles.push({
+                    x: canvas.width,
+                    y: 0,
+                    width: 50,
+                    height: height,
+                });
+                obstacles.push({
+                    x: canvas.width,
+                    y: height + 150,
+                    width: 50,
+                    height: canvas.height - height - 150,
+                });
+            }
+
+            obstacles.forEach((obstacle, index) => {
+                obstacle.x -= 3; // Slower obstacle speed for easier gameplay
+                ctx.fillStyle = 'red';
+                ctx.fillRect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);
+
+                if (obstacle.x + obstacle.width < 0) {
+                    obstacles.splice(index, 1);
+                    score++;
+                }
+
+                if (
+                    bat.x < obstacle.x + obstacle.width &&
+                    bat.x + bat.width > obstacle.x &&
+                    bat.y < obstacle.y + obstacle.height &&
+                    bat.y + bat.height > obstacle.y
+                ) {
+                    gameOver = true;
+                }
+            });
+        }
+
+        function update() {
+            if (gameOver) {
+                document.getElementById('loseScreen').style.display = 'flex';
+                document.getElementById('finalScore').innerText = score;
+                return;
+            }
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            bat.dy += bat.gravity;
+            bat.y += bat.dy;
+
+            if (bat.y < 0) bat.y = 0;
+            if (bat.y + bat.height > canvas.height) gameOver = true;
+
+            drawBat();
+            handleObstacles();
+
+            document.getElementById('score').innerText = `Score: ${score}`;
+
+            requestAnimationFrame(update);
+        }
+
+        function startGame() {
+            document.getElementById('startScreen').style.display = 'none';
+            gameStarted = true;
+            update();
+        }
+
+        function restartGame() {
+            document.getElementById('loseScreen').style.display = 'none';
+            obstacles.length = 0;
+            score = 0;
+            gameOver = false;
+            bat.y = canvas.height / 2;
+            bat.dy = 0;
+            update();
+        }
+
+        window.addEventListener('keydown', (e) => {
+            if (e.code === 'Space') bat.dy = bat.jump;
+        });
+
+        window.addEventListener('click', () => {
+            if (gameStarted) bat.dy = bat.jump;
+        });
+    </script>
+</body>
+</html>
