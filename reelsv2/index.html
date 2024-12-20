@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scrolling Reels Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            overflow: hidden;
+            background-color: #f0f0f0;
+        }
+        .reel {
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-bottom: 1px solid #ccc;
+        }
+        .caption {
+            font-size: 1.5rem;
+            margin-top: 20px;
+        }
+        .likes {
+            color: #e91e63;
+            margin-top: 10px;
+            font-size: 1.2rem;
+        }
+        .comments {
+            margin-top: 20px;
+            font-size: 1rem;
+            color: #555;
+        }
+        .stats {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            background: rgba(0, 0, 0, 0.8);
+            color: #fff;
+            padding: 10px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="stats">
+        Reels Watched: <span id="reels-watched">0</span>
+    </div>
+
+    <div id="container"></div>
+
+    <script>
+        const container = document.getElementById('container');
+        const reelsWatchedElement = document.getElementById('reels-watched');
+        let reelsWatched = 0;
+
+        const captions = [
+            "Just vibing 🎶", 
+            "Catch the sunset 🌅", 
+            "Monday mood 💤", 
+            "Living my best life ✨", 
+            "Workout grind 💪"
+        ];
+
+        const commentsList = [
+            "Wow, amazing!", 
+            "Love this! ❤️", 
+            "Where is this?", 
+            "So cool 😍", 
+            "I need to try this!"
+        ];
+
+        function generateReel() {
+            const reel = document.createElement('div');
+            reel.className = 'reel';
+
+            const randomCaption = captions[Math.floor(Math.random() * captions.length)];
+            const randomComments = Array.from({ length: Math.floor(Math.random() * 5) + 1 }, () =>
+                commentsList[Math.floor(Math.random() * commentsList.length)]
+            );
+
+            const caption = document.createElement('div');
+            caption.className = 'caption';
+            caption.textContent = randomCaption;
+
+            const likes = document.createElement('div');
+            likes.className = 'likes';
+            likes.textContent = '❤️ Likes: 0';
+
+            const comments = document.createElement('div');
+            comments.className = 'comments';
+            comments.textContent = 'Comments: ' + randomComments.join(', ');
+
+            reel.appendChild(caption);
+            reel.appendChild(likes);
+            reel.appendChild(comments);
+
+            reel.addEventListener('dblclick', () => {
+                const currentLikes = parseInt(likes.textContent.match(/\d+/)[0]);
+                likes.textContent = `❤️ Likes: ${currentLikes + 1}`;
+            });
+
+            return reel;
+        }
+
+        function loadReels() {
+            for (let i = 0; i < 5; i++) {
+                const reel = generateReel();
+                container.appendChild(reel);
+            }
+        }
+
+        function onScroll() {
+            const { scrollTop, clientHeight, scrollHeight } = document.documentElement;
+            if (scrollTop + clientHeight >= scrollHeight - 5) {
+                reelsWatched++;
+                reelsWatchedElement.textContent = reelsWatched;
+                const newReel = generateReel();
+                container.appendChild(newReel);
+            }
+        }
+
+        document.addEventListener('scroll', onScroll);
+        loadReels();
+    </script>
+</body>
+</html>
