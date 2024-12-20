@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Infinite Scrolling Reels Game</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #000;
+            color: #fff;
+            overflow: hidden;
+        }
+
+        .scroll-container {
+            width: 100%;
+            height: 100vh;
+            overflow-y: scroll;
+            position: relative;
+        }
+
+        .content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .reel {
+            width: calc(100vh * 0.5625); /* Maintain 9:16 aspect ratio */
+            height: 100vh; /* Full screen height */
+            background: #444;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+            color: white;
+            position: relative;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+            padding: 20px; /* Add padding to offset text */
+            box-sizing: border-box; /* Include padding in size calculation */
+        }
+
+        .reel-caption {
+            margin-top: 10px;
+            font-size: 20px;
+            font-style: italic;
+            color: #f0f0f0;
+            text-align: center; /* Center align text */
+        }
+
+        .counter {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.7);
+            color: #fff;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-size: 16px;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+    <div class="counter" id="counter">Reels: 0</div>
+    <div class="scroll-container" id="scrollContainer">
+        <div class="content" id="content">
+            <!-- Reels dynamically added here -->
+        </div>
+    </div>
+
+    <script>
+        const content = document.getElementById('content');
+        const counter = document.getElementById('counter');
+
+        const patterns = ["stripes", "dots", "waves", "grid", "diagonal"];
+
+        const captions = [
+            "Born to Lead, Forced to Scroll.",
+            "Legends Don’t Pause, Keep Scrolling.",
+            "Time is Money, Keep Wasting It.",
+            "Scroll Till You Drop.",
+            "You’re Not Getting This Time Back.",
+            "One More Reel Won’t Hurt... Or Will It?",
+            "Welcome to the Scroll Abyss.",
+            "Life’s Too Short, Keep Scrolling.",
+            "Why Stop Now?",
+            "Your Break is Now Eternal.",
+            "Scrolling Through Life, One Reel at a Time.",
+            "You’ve Made It This Far, Don’t Stop Now.",
+            "The Scroll Never Ends.",
+            "Caught in the Infinite Loop.",
+            "Keep Going, There’s Nothing Better Ahead.",
+            "You’re the Hero of This Endless Story.",
+            "Scroll Like No One’s Watching.",
+            "Every Reel Brings You Closer to... More Reels.",
+            "Don’t Think, Just Scroll.",
+            "Another Reel, Another Moment Lost.",
+            "Your Destiny Lies in the Next Reel."
+        ];
+
+        let reelCount = 0;
+
+        function updateCounter() {
+            counter.textContent = `Reels: ${reelCount}`;
+        }
+
+        function getRandomPattern() {
+            const randomHue = Math.floor(Math.random() * 360);
+            const randomLightness = Math.floor(Math.random() * 20) + 10; // Low lightness colors
+            return `linear-gradient(hsla(${randomHue}, 70%, ${randomLightness}%, 1), hsla(${randomHue}, 70%, ${randomLightness + 10}%, 1))`;
+        }
+
+        function getRandomCaption() {
+            return captions[Math.floor(Math.random() * captions.length)];
+        }
+
+        function createReel() {
+            const reel = document.createElement('div');
+            reel.className = 'reel';
+            reel.style.background = getRandomPattern();
+
+            const caption = document.createElement('div');
+            caption.className = 'reel-caption';
+            caption.textContent = getRandomCaption();
+
+            reel.appendChild(caption);
+            return reel;
+        }
+
+        function loadReels(count = 10) {
+            for (let i = 0; i < count; i++) {
+                const reel = createReel();
+                content.appendChild(reel);
+            }
+        }
+
+        // Infinite scrolling logic
+        const scrollContainer = document.getElementById('scrollContainer');
+
+        scrollContainer.addEventListener('scroll', () => {
+            const reels = document.querySelectorAll('.reel');
+            reels.forEach((reel, index) => {
+                const reelRect = reel.getBoundingClientRect();
+                if (reelRect.top < window.innerHeight && reelRect.bottom > 0 && !reel.dataset.seen) {
+                    reel.dataset.seen = true;
+                    reelCount++;
+                    updateCounter();
+                }
+            });
+
+            if (scrollContainer.scrollTop + scrollContainer.clientHeight >= scrollContainer.scrollHeight - 100) {
+                loadReels();
+            }
+        });
+
+        // Initial load
+        loadReels(20); // Start with more reels to make scrolling smoother initially
+    </script>
+</body>
+</html>
