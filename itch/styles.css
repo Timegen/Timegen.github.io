@@ -56,20 +56,21 @@ main {
     border-color: #325a67;
     box-shadow: 0 0 25px 15px rgba(65, 0, 55, 0.7);
     color: #f0ffff;
-    position: relative; /* Add this to position the child element relative to the main */
+    position: relative;
 }
 
 main .badges {
-    position: absolute; /* Position the badges absolutely within the main */
-    bottom: 5px; /* Adjust the distance from the bottom of the main */
-    left: 5px; /* Adjust the distance from the left side of the main */
-    display: flex; /* Align images in a row */
-    gap: 5px; /* Space between the images */
+    position: absolute;
+    bottom: 5px;
+    left: 5px;
+    display: flex;
+    gap: 5px;
 }
 
 main .badges img {
-    height: 25px;
+    height: 35px;
     image-rendering: crisp-edges;
+    image-rendering: pixelated;
 }
 
 @font-face {
