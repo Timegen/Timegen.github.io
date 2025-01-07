@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fullscreen iFrame on Key Press</title>
+    <title>Fullscreen iFrame</title>
     <style>
         body, html {
             margin: 0;
@@ -21,28 +21,10 @@
     </style>
 </head>
 <body>
-    <iframe id="polytrack" 
-            src="https://www.kodub.com/apps/polytrack" 
+    <iframe src="https://www.kodub.com/apps/polytrack" 
             name="Polytrack" 
             scrolling="no" 
             allowfullscreen>
     </iframe>
-
-    <script>
-        document.addEventListener('keydown', (event) => {
-            if (event.key === 'f' || event.key === 'F') { // Check for 'F' key
-                const iframe = document.getElementById("polytrack");
-                if (iframe.requestFullscreen) {
-                    iframe.requestFullscreen();
-                } else if (iframe.mozRequestFullScreen) { // Firefox
-                    iframe.mozRequestFullScreen();
-                } else if (iframe.webkitRequestFullscreen) { // Chrome, Safari, Opera
-                    iframe.webkitRequestFullscreen();
-                } else if (iframe.msRequestFullscreen) { // IE/Edge
-                    iframe.msRequestFullscreen();
-                }
-            }
-        });
-    </script>
 </body>
 </html>
