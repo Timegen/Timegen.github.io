@@ -3,42 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Observer Navigator</title>
+    <title>Crossword Unblocked</title>
     <style>
-        body {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            gap: 10px;
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
+            overflow: hidden; /* Prevents scrolling */
         }
+
         iframe {
-            width: 80%;
-            height: 80vh;
-            border: 1px solid #000;
+            height: 100%;
+            width: 100%;
+            border: none;
         }
     </style>
 </head>
 <body>
-    <button onclick="changePage(-2)">Back</button>
-    <iframe id="viewer" src="https://fordhamobserver.com/78654/fun-and-games/tuesday-november-26/" frameborder="0"></iframe>
-    <button onclick="changePage(2)">Forward</button>
-
-    <script>
-        let currentNumber = 78654;
-        let currentDate = new Date("November 26, 2024");
-        const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-
-        function changePage(delta) {
-            currentNumber += delta;
-            currentDate.setDate(currentDate.getDate() + (delta / 2));
-            let dayName = daysOfWeek[currentDate.getDay()];
-            let month = currentDate.toLocaleString('default', { month: 'long' });
-            let date = currentDate.getDate();
-            let newUrl = `https://fordhamobserver.com/${currentNumber}/fun-and-games/${dayName.toLowerCase()}-${month.toLowerCase()}-${date}/`;
-            document.getElementById("viewer").src = newUrl;
-        }
-    </script>
+    <iframe src="https://fordhamobserver.com/78654/fun-and-games/tuesday-november-26/" 
+            name="Polytrack" 
+            scrolling="no" 
+            allowfullscreen>
+    </iframe>
 </body>
 </html>
