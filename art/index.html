@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Navigate</title>
+    <style>
+        body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial; padding: 2rem; background: #f7f7fb; color: #111; }
+        h1 { margin-bottom: 1rem; }
+        #buttons { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+        .file-btn {
+            appearance: none;
+            border: 1px solid #c9d0df;
+            background: #fff;
+            padding: 0.6rem 0.9rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            transition: transform .06s ease, box-shadow .06s ease;
+        }
+        .file-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(20,30,60,.08); }
+        .muted { color: #666; margin-top: 1rem; }
+    </style>
+</head>
+<body>
+    <h1>Art — Pages</h1>
+    <div id="buttons" aria-live="polite">Loading pages…</div>
+    <p class="muted" id="note"></p>
+
+    <script>
+    (async function() {
+        const container = document.getElementById('buttons');
+        const note = document.getElementById('note');
+
+        function makeLabel(href){
+            // Remove query/hash and trailing slash
+            href = href.split(/[?#]/)[0].replace(/\/$/, '');
+            // get filename portion
+            const parts = href.split('/');
+            let name = parts[parts.length - 1] || parts[parts.length - 2] || href;
+            // drop .html
+            name = name.replace(/\.html$/i, '');
+            // humanize: replace dashes/underscores, capitalize words
+            name = name.replace(/[-_]+/g, ' ').trim();
+            return name ? name.replace(/\b\w/g, c => c.toUpperCase()) : href;
+        }
+
+        function addButton(href){
+            const btn = document.createElement('button');
+            btn.className = 'file-btn';
+            btn.type = 'button';
+            btn.textContent = makeLabel(href);
+            btn.onclick = () => { location.href = href; };
+            container.appendChild(btn);
+        }
+
+        try {
+            // Try to fetch a directory listing (works on some static servers/autoindex setups)
+            const res = await fetch('./', { cache: 'no-store' });
+            if (!res.ok) throw new Error('no directory listing');
+            const text = await res.text();
+            const doc = new DOMParser().parseFromString(text, 'text/html');
+            // collect links that look like .html files
+            const anchors = Array.from(doc.querySelectorAll('a[href]'))
+                .map(a => a.getAttribute('href'))
+                .filter(h => /\.html$/i.test(h));
+            // normalize and dedupe
+            const unique = Array.from(new Set(anchors.map(h => {
+                // convert relative to same-directory path
+                return h.replace(/^\.?\//, '');
+            })));
+
+            // exclude this index file (index.html)
+            const selfNames = ['index.html', ''];
+            const pages = unique.filter(h => !selfNames.includes(h.toLowerCase()));
+
+            if (pages.length === 0) throw new Error('no html files found in listing');
+
+            container.innerHTML = '';
+            pages.forEach(addButton);
+            note.textContent = `${pages.length} page(s) found.`;
+            return;
+        } catch (e) {
+            // fallback: Try to probe common filenames if you want, but by default show guidance
+            container.innerHTML = '';
+            note.textContent = 'Directory listing not available from this server. If you want automatic buttons, enable directory indexes or add links manually below.';
+            // Example manual entries (edit these to match files in this folder)
+            const exampleFiles = [
+                // Uncomment and edit the lines below to create buttons for known files:
+                // 'example.html',
+                // 'gallery.html',
+                // 'sketches.html'
+            ];
+            if (exampleFiles.length) exampleFiles.forEach(addButton);
+        }
+    })();
+    </script>
+</body>
+</html>
